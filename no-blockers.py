@@ -1,6 +1,4 @@
-import os
 import requests
-import time
 from utils import check_login, get_bug, get_url, URL, web_ext_base
 
 
@@ -19,12 +17,13 @@ if __name__=='__main__':
     for bug in get_no_blockers():
         open_dependents = 0
         for dependent_id in bug['depends_on']:
-            dependent = get_bug(dependent_id)
+            try:
+                dependent = get_bug(dependent_id)
+            except requests.exceptions.HTTPError as error:
+                if error == 401:
+                    continue
             if dependent['status'] != 'RESOLVED':
                 open_dependents += 1
 
         if not open_dependents:
-            print '{}, {}'.format(bug['summary'], get_url(bug['id']))
-
-        # Hack to stop Bugzilla banning me.
-        time.sleep(30)
+            print '{}, {}...'.format(get_url(bug['id']), bug['summary'][:30])
