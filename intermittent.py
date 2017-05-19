@@ -81,6 +81,8 @@ if __name__ == '__main__':
     days = int(sys.argv[3])
     dry_run = '--dry-run' in sys.argv
 
+    print ('Product: {}, component: {}, days since: {}'
+           .format(product, component, days))
     if dry_run:
         print 'This is a dry run, won\'t actually close any bugs.'
 
@@ -96,3 +98,4 @@ if __name__ == '__main__':
 
     print 'Found: {} bugs'.format(len(bugs))
     print 'Closed: {} bugs'.format(closed)
+    print 'Complete.'
