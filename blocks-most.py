@@ -19,7 +19,7 @@ if __name__=='__main__':
     blocks = {}
     for bug in get_no_blockers():
         if len(bug['blocks']) > 2:
-            blocks[bug['id']] = len(bug['blocks'])
+            blocks[bug['id']] = {len(bug['blocks'])
 
     sorted_list = sorted([(v, k) for k, v in blocks.items()])
     for count, bug_id in reversed(sorted_list):
