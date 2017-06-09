@@ -2,6 +2,7 @@ from datetime import datetime, date, timedelta
 from urllib import urlencode
 
 import requests
+import os
 import sys
 
 from utils import check_login, URL, creds
@@ -9,6 +10,8 @@ from utils import check_login, URL, creds
 brasstacks_rest = 'https://brasstacks.mozilla.com/orangefactor/api/count/?'
 brasstacks_info = ('https://brasstacks.mozilla.com/orangefactor/?'
                    'display=Bug&bugid={}&startday={}&endday={}&tree=all')
+brasstacks_session = os.getenv('BRASSTACKS_COOKIE_VALUE')
+brasstacks_user_agent = os.getenv('BRASSTACKS_USER_AGENT')
 
 
 def fetch(product, component):
@@ -43,9 +46,20 @@ def last_occurred(bug, days):
         'startday': start,
         'endday': date.today()
     }
-    res = requests.get(brasstacks_rest, params=kw)
+    res = requests.get(
+        brasstacks_rest,
+        params=kw,
+        cookies={'session': brasstacks_session},
+        headers={'User-Agent': brasstacks_user_agent}
+    )
     res.raise_for_status()
-    sorted_results = sorted([(k, v) for k, v in res.json()['oranges'].items()])
+    try:
+        json = res.json()
+    except:
+        print 'Brasstacks is not returning JSON. Have you got the correct user agent and session cookies?'
+        raise
+
+    sorted_results = sorted([(k, v) for k, v in json['oranges'].items()])
 
     for result in sorted_results:
         if result[1]['orangecount'] > 0:
