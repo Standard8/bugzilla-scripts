@@ -32,6 +32,12 @@ def fetch(product, component):
 
 def last_occurred(bug, days):
     print 'Bug: {}'.format(bug['id'])
+
+    if ("test disabled" in bug['whiteboard'] or
+        "stockwell disabled" in bug['whiteboard']):
+        print '  Ignoring because the test is disabled.'
+        return False
+
     start = date.today() - timedelta(days=days)
     created = datetime.strptime(bug['creation_time'][:10], '%Y-%m-%d').date()
     # Assume the bug was created earlier than it was, just in case there
